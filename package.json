@@ -1,12 +1,12 @@
 {
     "name": "js-encryption",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Simple encryption in JavaScript.",
     "main": "src/index.js",
     "types": "index.d.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "terser src/index.js --output build/js-encryption.js"
+        "build": "terser src/index.js --config-file terser-config.json --output build/js-encryption.js"
     },
     "repository": {
         "type": "git",
