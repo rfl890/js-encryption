@@ -8,7 +8,7 @@ This module provides a simple way to encrypt data. Under the hood, it uses AES-2
 ## Browser
 You can use script tags
 ```html
-<script src="https://cdn.jsdelivr.net/npm/js-encryption@1.0.2/build/js-encryption.js" integrity="sha384-tUCTiDAKJFG5ZDi+9TdcpmXhkJR1N05r8vsNkezhb+cI2DUjl63TOrl7akJ1f9Cl" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/js-encryption@1.0.2/build/js-encryption.js" integrity="sha384-tUCTiDAKJFG5ZDi+9TdcpmXhkJR1N05r8vsNkezhb+cI2DUjl63TOrl7akJ1f9Cl" crossorigin="anonymous"></script>
 ```
 ```js
 js_encryption.encrypt(...);
