@@ -1,0 +1,21 @@
+{
+    "name": "js-encryption",
+    "version": "1.0.0",
+    "description": "Simple encryption in JavaScript.",
+    "main": "src/index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "terser src/index.js --output build/js-encryption.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rfl890/js-encryption.git"
+    },
+    "keywords": [],
+    "author": "rfl890",
+    "license": "MIT",
+    "devDependencies": {
+        "terser": "^5.17.7"
+    }
+}
