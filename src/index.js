@@ -1,4 +1,4 @@
-(function () {
+(async function () {
     const is_browser = typeof window === "object";
     const is_node_js = !is_browser && typeof process === "object" && process.versions && process.versions.node;
     const is_worker = !is_browser && typeof self === "object" && self.postMessage;
@@ -39,7 +39,13 @@
         return newArray;
     }
 
-    async function deriveKeyPBKDF2(password) {
+    async function deriveKeyPBKDF2(password, salt) {
+        if (!checkArg(password) || !(typeof password === "string")) throw new TypeError("password must be a string");
+        if (checkArg(salt) && !(salt instanceof Uint8Array))
+            throw new TypeError("salt must be a Uint8Array");
+        if (checkArg(salt) && salt.length !== 32)
+            throw new Error("salt.length must be 32");
+        
         const passwordBytes = textEncoder.encode(password);
         const passwordHash = await crypto.subtle.digest(
             "SHA-256",
@@ -53,13 +59,12 @@
             false,
             ["deriveBits"]
         );
-        const salt = new Uint8Array(32);
-        crypto.getRandomValues(salt);
+        const _salt = salt || crypto.getRandomValues(new Uint8Array(32));
 
         const pbkdf2Params = {
             name: "PBKDF2",
             hash: "SHA-256",
-            salt: salt,
+            salt: _salt,
             iterations: 600_000,
         };
 
@@ -77,46 +82,7 @@
         );
         return {
             masterKey: masterKey,
-            salt: salt,
-        };
-    }
-
-    async function deriveKeyPBKDF2WithSalt(password, salt) {
-        const passwordBytes = textEncoder.encode(password);
-        const passwordHash = await crypto.subtle.digest(
-            "SHA-256",
-            passwordBytes.buffer
-        );
-
-        const hashedKey = await crypto.subtle.importKey(
-            "raw",
-            passwordHash,
-            "PBKDF2",
-            false,
-            ["deriveBits"]
-        );
-
-        const pbkdf2Params = {
-            name: "PBKDF2",
-            hash: "SHA-256",
-            salt: salt,
-            iterations: 600_000,
-        };
-
-        const masterKeyBytes = await crypto.subtle.deriveBits(
-            pbkdf2Params,
-            hashedKey,
-            32 * 8
-        );
-        const masterKey = await crypto.subtle.importKey(
-            "raw",
-            masterKeyBytes,
-            "HKDF",
-            false,
-            ["deriveKey"]
-        );
-        return {
-            masterKey: masterKey,
+            salt: _salt
         };
     }
 
@@ -175,6 +141,7 @@
     }
 
     async function encryptPassword(data, password) {
+        if (!checkArg(data) || !(data instanceof Uint8Array)) throw new Error("data must be a Uint8Array");
         const { masterKey, salt } = await deriveKeyPBKDF2(password);
         const { key_aes, key_hmac } = await getKeysFromMasterKey(
             masterKey,
@@ -206,10 +173,9 @@
         );
         return concatUint8Arrays(ciphertext_full_without_hmac, hmac);
     }
-
     async function decryptPassword(data, password) {
-        if (data.length < 81) {
-            /* hmac, iv, salt + at least 1 encrypted byte */
+        if (!checkArg(data) || !(data instanceof Uint8Array)) throw new Error("data must be a Uint8Array");
+        if (data.length < 80) {
             throw new Error("Invalid ciphertext");
         }
 
@@ -220,7 +186,7 @@
         const iv = data.slice(ciphertext.length, data.length - 64);
         const salt = data.slice(ciphertext.length + 16, data.length - 32);
 
-        const { masterKey } = await deriveKeyPBKDF2WithSalt(password, salt);
+        const { masterKey } = await deriveKeyPBKDF2(password, salt);
         const { key_aes, key_hmac } = await getKeysFromMasterKey(
             masterKey,
             salt
@@ -248,6 +214,7 @@
     }
 
     async function encrypt(data, key) {
+        if (!checkArg(data) || !(data instanceof Uint8Array)) throw new Error("data must be a Uint8Array");
         const { masterKey, salt } = await deriveKeyRaw(key);
         const { key_aes, key_hmac } = await getKeysFromMasterKey(
             masterKey,
@@ -280,8 +247,10 @@
     }
 
     async function decrypt(data, key) {
-        if (data.length < 81) {
-            /* hmac, iv, salt + at least 1 encrypted byte */
+        if (!checkArg(data) || !(data instanceof Uint8Array)) throw new Error("data must be a Uint8Array");
+        if (!checkArg(key) || !(key instanceof Uint8Array)) throw new Error("key must be a Uint8Array");
+
+        if (data.length < 80) {
             throw new Error("Invalid ciphertext");
         }
 
@@ -304,6 +273,7 @@
             signature,
             ciphertext_full_without_hmac
         );
+        
         if (verified !== true) {
             throw new Error("Decryption error");
         }
