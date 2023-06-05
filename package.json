@@ -1,6 +1,6 @@
 {
     "name": "js-encryption",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Simple encryption in JavaScript.",
     "main": "src/index.js",
     "types": "index.d.ts",

@@ -1,4 +1,4 @@
-(async function () {
+(function () {
     const is_browser = typeof window === "object";
     const is_node_js = !is_browser && typeof process === "object" && process.versions && process.versions.node;
     const is_worker = !is_browser && typeof self === "object" && self.postMessage;
