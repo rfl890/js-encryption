@@ -8,7 +8,7 @@ This module provides a simple way to encrypt data. Under the hood, it uses AES-2
 ## Browser
 You can use script tags
 ```html
-<script src="https://cdn.jsdelivr.net/npm/js-encryption@1.0.8/build/js-encryption.js" integrity="sha384-jzPhFI9b+X+iYUi1ChCLdGwkGO78ULTneL12DpVeTgY9qgJfW1jnc8aVl49e4OIM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-encryption@1.1.0/build/js-encryption.js" integrity="sha384-4CK7xKDj2bhmiN6U75M3kQvduxMi7iIkRdXyIbpdnRAf2YQmN93TbP+KEFx2pFBM" crossorigin="anonymous"></script>
 ```
 ```js
 js_encryption.encrypt(...);
@@ -59,7 +59,7 @@ js_encryption.encrypt(
     dataToEncrypt, 
     encryptionKey
 )
-    .then(encrypted => js_encryption.decryptPassword(encrypted, encryptionKey))
+    .then(encrypted => js_encryption.decrypt(encrypted, encryptionKey))
     .then(decrypted => console.log(textDecoder.decode(decrypted)));
 ```
 
@@ -75,13 +75,13 @@ decrypt(data: Uint8Array, key: Uint8Array): Promise<Uint8Array>
 Decrypts the ciphertext from `encrypt()` (`data`) with the given key. Returns the decrypted data. The key must be 32 bytes long (for AES-256).
 
 ```js
-encryptPassword(data: Uint8Array, password: String): Promise<Uint8Array>
+encryptPassword(data: Uint8Array, password: string): Promise<Uint8Array>
 ```
 Encrypts the data with the given password. Returns the encrypted ciphertext. The key must be 32 bytes long (for AES-256).   
    
    
 ```js
-decryptPassword(data: Uint8Array, password: String): Promise<Uint8Array>
+decryptPassword(data: Uint8Array, password: string): Promise<Uint8Array>
 ```
 
 Decrypts the ciphertext from `encryptPassword()` (`data`) with the given password. Returns the decrypted data.

@@ -1,12 +1,13 @@
 {
     "name": "js-encryption",
-    "version": "1.0.8",
+    "version": "1.1.0",
     "description": "Simple encryption in JavaScript.",
-    "main": "src/index.js",
-    "types": "index.d.ts",
+    "main": "build/js-encryption.js",
+    "module": "build/js-encryption.esm.js",
+    "types": "build/main.d.ts",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "terser src/index.js --config-file terser-config.json --output build/js-encryption.js"
+        "build": "rollup --config"
     },
     "repository": {
         "type": "git",
@@ -15,7 +16,14 @@
     "keywords": [],
     "author": "rfl890",
     "license": "MIT",
+    "dependencies": {
+        "hash-wasm": "^4.9.0"
+    },
     "devDependencies": {
-        "terser": "^5.17.7"
+        "@rollup/plugin-node-resolve": "^15.1.0",
+        "@rollup/plugin-typescript": "^11.1.2",
+        "rollup": "^3.26.3",
+        "rollup-plugin-minification": "^0.2.0",
+        "tslib": "^2.6.0"
     }
 }
